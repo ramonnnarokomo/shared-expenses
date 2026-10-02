@@ -1,0 +1,5 @@
+# Sistema operativo e IDEs
+.DS_Store
+Thumbs.db
+.idea/
+*.iml

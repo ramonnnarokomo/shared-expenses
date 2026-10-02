@@ -1,0 +1,45 @@
+<section class="card" aria-labelledby="balances-title">
+  <h2 id="balances-title">Balances</h2>
+
+  <ul class="balances">
+    @for (row of rows(); track row.memberId) {
+      <li class="balance">
+        <div class="balance-text">
+          <span class="name">{{ row.name }}</span>
+          <span
+            class="amount net"
+            [class.positive]="row.netCents > 0"
+            [class.negative]="row.netCents < 0"
+          >
+            @if (row.netCents > 0) {
+              le deben {{ row.netCents | money: currency() }}
+            } @else if (row.netCents < 0) {
+              debe {{ -row.netCents | money: currency() }}
+            } @else {
+              en paz
+            }
+          </span>
+        </div>
+
+        <!-- Left half: what they owe (red). Right half: what they are owed (green). -->
+        <div class="track" aria-hidden="true">
+          <div class="half half-negative">
+            @if (row.netCents < 0) {
+              <span class="bar bar-negative" [style.width.%]="row.barPercent"></span>
+            }
+          </div>
+          <div class="half">
+            @if (row.netCents > 0) {
+              <span class="bar bar-positive" [style.width.%]="row.barPercent"></span>
+            }
+          </div>
+        </div>
+
+        <p class="muted detail">
+          Pagó {{ row.paidCents | money: currency() }} · Su parte
+          {{ row.owedCents | money: currency() }}
+        </p>
+      </li>
+    }
+  </ul>
+</section>

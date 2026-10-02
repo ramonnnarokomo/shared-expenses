@@ -1,0 +1,23 @@
+<header class="app-header">
+  <a class="brand" routerLink="/">Gastos compartidos</a>
+</header>
+
+<main class="app-main">
+  <router-outlet />
+</main>
+
+<div class="toasts" aria-live="polite">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast" [class.toast-error]="toast.kind === 'error'">
+      <span>{{ toast.message }}</span>
+      <button
+        type="button"
+        class="toast-close"
+        aria-label="Cerrar aviso"
+        (click)="toastService.dismiss(toast.id)"
+      >
+        ×
+      </button>
+    </div>
+  }
+</div>

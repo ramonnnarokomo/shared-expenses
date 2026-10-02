@@ -1,0 +1,132 @@
+<form class="card" (ngSubmit)="submit()" aria-labelledby="expense-form-title">
+  <h2 id="expense-form-title">Nuevo gasto</h2>
+
+  <div class="row">
+    <div class="field grow">
+      <label for="expense-description">Descripción</label>
+      <input
+        id="expense-description"
+        name="description"
+        type="text"
+        maxlength="120"
+        placeholder="Cena, gasolina, súper…"
+        autocomplete="off"
+        [(ngModel)]="description"
+      />
+    </div>
+
+    <div class="field amount-field">
+      <label for="expense-amount">Importe ({{ currency() }})</label>
+      <input
+        id="expense-amount"
+        name="amount"
+        type="text"
+        inputmode="decimal"
+        placeholder="0,00"
+        autocomplete="off"
+        [attr.aria-invalid]="amountInvalid()"
+        [attr.aria-describedby]="amountInvalid() ? 'amount-error' : null"
+        [(ngModel)]="amountText"
+      />
+    </div>
+  </div>
+  @if (amountInvalid()) {
+    <p id="amount-error" class="error-text field-error">
+      Escribe un importe válido, por ejemplo 12,34
+    </p>
+  }
+
+  <div class="field">
+    <label for="expense-paid-by">Pagado por</label>
+    <select id="expense-paid-by" name="paidBy" [(ngModel)]="paidBy">
+      @for (member of members(); track member.id) {
+        <option [ngValue]="member.id">{{ member.name }}</option>
+      }
+    </select>
+  </div>
+
+  <fieldset class="split">
+    <legend class="field-label">¿Cómo se reparte?</legend>
+    <div class="segmented">
+      <label class="segment">
+        <input type="radio" name="mode" value="equal" [(ngModel)]="mode" />
+        A partes iguales
+      </label>
+      <label class="segment">
+        <input type="radio" name="mode" value="exact" [(ngModel)]="mode" />
+        Importes exactos
+      </label>
+    </div>
+
+    @if (mode() === 'equal') {
+      <ul class="split-list">
+        @for (member of members(); track member.id) {
+          <li>
+            <label class="check">
+              <input
+                type="checkbox"
+                [name]="'equal-' + member.id"
+                [ngModel]="isSelected(member.id)"
+                (ngModelChange)="toggleMember(member.id, $event)"
+              />
+              {{ member.name }}
+            </label>
+            <span class="amount muted">
+              @if (isSelected(member.id) && amountCents()) {
+                {{ equalShares().get(member.id) ?? 0 | money: currency() }}
+              } @else {
+                —
+              }
+            </span>
+          </li>
+        }
+      </ul>
+      @if (selectedIds().length === 0) {
+        <p class="error-text">Marca al menos una persona.</p>
+      }
+    } @else {
+      <ul class="split-list">
+        @for (member of members(); track member.id) {
+          <li>
+            <label [for]="'exact-' + member.id">{{ member.name }}</label>
+            <input
+              type="text"
+              inputmode="decimal"
+              class="exact-input"
+              placeholder="0,00"
+              autocomplete="off"
+              [id]="'exact-' + member.id"
+              [name]="'exact-' + member.id"
+              [ngModel]="exactTexts()[member.id] ?? ''"
+              (ngModelChange)="setExactText(member.id, $event)"
+            />
+          </li>
+        }
+      </ul>
+      <p
+        class="exact-status"
+        aria-live="polite"
+        [class.positive]="!exactHasInvalid() && exactRemaining() === 0"
+        [class.negative]="exactHasInvalid() || exactRemaining() !== 0"
+      >
+        @if (exactHasInvalid()) {
+          Hay algún importe no válido.
+        } @else if (exactRemaining() > 0) {
+          Faltan {{ exactRemaining() | money: currency() }} por repartir.
+        } @else if (exactRemaining() < 0) {
+          Sobran {{ -exactRemaining() | money: currency() }}.
+        } @else {
+          El reparto cuadra con el importe.
+        }
+      </p>
+    }
+  </fieldset>
+
+  @if (error()) {
+    <p class="error-text" role="alert">{{ error() }}</p>
+  }
+
+  <button type="submit" class="btn btn-primary submit" [disabled]="!canSubmit()">
+    {{ saving() ? 'Guardando…' : 'Añadir gasto' }}
+  </button>
+</form>

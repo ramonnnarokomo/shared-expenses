@@ -1,0 +1,30 @@
+<section class="card" aria-labelledby="settlements-title">
+  <h2 id="settlements-title">Cómo saldar cuentas</h2>
+
+  @if (settlements().length === 0) {
+    <p class="muted">Todo saldado: nadie debe nada.</p>
+  } @else {
+    <ul class="settlements">
+      @for (settlement of settlements(); track $index) {
+        <li>
+          <span>
+            <strong>{{ settlement.fromName }}</strong> paga
+            <strong class="amount">{{ settlement.amountCents | money: currency() }}</strong>
+            a <strong>{{ settlement.toName }}</strong>
+          </span>
+          <button
+            type="button"
+            class="btn btn-small"
+            [disabled]="busy()"
+            [attr.aria-label]="
+              'Marcar como pagado: ' + settlement.fromName + ' a ' + settlement.toName
+            "
+            (click)="markAsPaid.emit(settlement)"
+          >
+            Marcar como pagado
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</section>

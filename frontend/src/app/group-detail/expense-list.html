@@ -1,0 +1,35 @@
+<section class="card" aria-labelledby="expenses-title">
+  <h2 id="expenses-title">Gastos</h2>
+
+  @if (expenses().length === 0) {
+    <p class="muted">Todavía no hay gastos. Añade el primero con el formulario de arriba.</p>
+  } @else {
+    <ul class="expenses">
+      @for (expense of expenses(); track expense.id) {
+        <li class="expense">
+          <div class="expense-main">
+            <div>
+              <p class="description">{{ expense.description }}</p>
+              <p class="muted">
+                Pagó {{ nameOf(expense.paidBy) }} · {{ expense.createdAt | date: 'd MMM' }}
+              </p>
+            </div>
+            <span class="amount expense-amount">{{ expense.amountCents | money: currency() }}</span>
+          </div>
+
+          <div class="expense-footer">
+            <p class="shares muted">Reparto: {{ shareSummary(expense) }}</p>
+            <button
+              type="button"
+              class="btn btn-small btn-danger"
+              [attr.aria-label]="'Borrar el gasto ' + expense.description"
+              (click)="remove.emit(expense)"
+            >
+              Borrar
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>

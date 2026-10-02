@@ -1,0 +1,29 @@
+<section class="card" aria-labelledby="members-title">
+  <h2 id="members-title">Personas</h2>
+
+  <ul class="members">
+    @for (member of members(); track member.id) {
+      <li>{{ member.name }}</li>
+    }
+  </ul>
+
+  <form class="add-form" (ngSubmit)="submit()">
+    <label for="new-member" class="visually-hidden">Nombre de la nueva persona</label>
+    <input
+      id="new-member"
+      name="name"
+      type="text"
+      maxlength="50"
+      placeholder="Nombre"
+      autocomplete="off"
+      [(ngModel)]="name"
+    />
+    <button type="submit" class="btn" [disabled]="saving() || name().trim() === ''">
+      Añadir persona
+    </button>
+  </form>
+
+  @if (error()) {
+    <p class="error-text" role="alert">{{ error() }}</p>
+  }
+</section>

@@ -1,0 +1,35 @@
+<div class="layout">
+  <section aria-labelledby="groups-title">
+    <h1 id="groups-title">Grupos</h1>
+
+    @if (loading()) {
+      <p class="state">Cargando grupos…</p>
+    } @else if (error()) {
+      <div class="state state-error" role="alert">
+        <p>{{ error() }}</p>
+        <button type="button" class="btn" (click)="load()">Reintentar</button>
+      </div>
+    } @else if (groups().length === 0) {
+      <p class="state">Todavía no hay grupos. Crea el primero con el formulario.</p>
+    } @else {
+      <ul class="group-list">
+        @for (group of groups(); track group.id) {
+          <li>
+            <a class="card group-card" [routerLink]="['/groups', group.id]">
+              <span class="group-name">{{ group.name }}</span>
+              <span class="muted">
+                {{ group.memberCount }} {{ group.memberCount === 1 ? 'persona' : 'personas' }}
+              </span>
+              <span class="group-total">
+                <span class="muted">Total gastado</span>
+                <span class="amount">{{ group.totalSpentCents | money: group.currency }}</span>
+              </span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <app-new-group-form (created)="openGroup($event)" />
+</div>

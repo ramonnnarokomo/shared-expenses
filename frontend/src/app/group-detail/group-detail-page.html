@@ -1,0 +1,77 @@
+<a class="back-link" routerLink="/">← Todos los grupos</a>
+
+@if (loading()) {
+  <p class="state">Cargando grupo…</p>
+} @else if (error() && !group()) {
+  <div class="state state-error" role="alert">
+    <p>{{ error() }}</p>
+    <button type="button" class="btn" (click)="load()">Reintentar</button>
+  </div>
+} @else if (group(); as group) {
+  @if (error()) {
+    <p class="error-text reload-error" role="alert">{{ error() }}</p>
+  }
+
+  <header class="card group-header">
+    <div>
+      <h1>{{ group.name }}</h1>
+      <p class="muted">{{ group.members.length }} personas · {{ group.expenses.length }} gastos</p>
+    </div>
+    <div class="total">
+      <span class="muted">Total gastado</span>
+      <span class="total-amount amount">{{ totalSpentCents() | money: group.currency }}</span>
+    </div>
+  </header>
+
+  <div class="columns">
+    <div class="column">
+      <app-expense-form
+        [groupId]="group.id"
+        [members]="group.members"
+        [currency]="group.currency"
+        (created)="onExpenseCreated()"
+      />
+      <app-expense-list
+        [expenses]="group.expenses"
+        [memberNames]="memberNames()"
+        [currency]="group.currency"
+        (remove)="deleteExpense($event)"
+      />
+    </div>
+
+    <div class="column">
+      <app-balances-panel [balances]="balances()" [currency]="group.currency" />
+      <app-settlements-panel
+        [settlements]="settlements()"
+        [currency]="group.currency"
+        [busy]="savingPayment()"
+        (markAsPaid)="markAsPaid($event)"
+      />
+      <app-members-panel
+        [groupId]="group.id"
+        [members]="group.members"
+        (added)="onMemberAdded($event)"
+      />
+
+      <section class="card" aria-labelledby="payments-title">
+        <h2 id="payments-title">Historial de pagos</h2>
+        @if (group.payments.length === 0) {
+          <p class="muted">Todavía no se ha registrado ningún pago.</p>
+        } @else {
+          <ul class="payment-list">
+            @for (payment of group.payments; track payment.id) {
+              <li>
+                <span>
+                  {{ memberNames().get(payment.fromMemberId) }} pagó a
+                  {{ memberNames().get(payment.toMemberId) }}
+                  <span class="muted">· {{ payment.createdAt | date: 'd MMM' }}</span>
+                </span>
+                <span class="amount">{{ payment.amountCents | money: group.currency }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+  </div>
+}

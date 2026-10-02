@@ -1,0 +1,71 @@
+<form class="card" (ngSubmit)="submit()" aria-labelledby="new-group-title">
+  <h2 id="new-group-title">Nuevo grupo</h2>
+
+  <div class="field">
+    <label for="group-name">Nombre</label>
+    <input
+      id="group-name"
+      name="name"
+      type="text"
+      maxlength="100"
+      placeholder="Piso Lavapiés"
+      autocomplete="off"
+      [(ngModel)]="name"
+    />
+  </div>
+
+  <div class="field">
+    <label for="group-currency">Moneda</label>
+    <select id="group-currency" name="currency" [(ngModel)]="currency">
+      @for (code of currencies; track code) {
+        <option [value]="code">{{ code }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="member-name">Personas</label>
+    <div class="add-row">
+      <!-- Enter adds the person instead of submitting the whole form. -->
+      <input
+        id="member-name"
+        name="memberDraft"
+        type="text"
+        maxlength="50"
+        placeholder="Nombre"
+        autocomplete="off"
+        aria-describedby="members-hint"
+        [(ngModel)]="memberDraft"
+        (keydown.enter)="$event.preventDefault(); addMember()"
+      />
+      <button type="button" class="btn" (click)="addMember()">Añadir</button>
+    </div>
+    <p id="members-hint" class="muted">Añade al menos 2 personas.</p>
+  </div>
+
+  @if (members().length > 0) {
+    <ul class="chips" aria-label="Personas del grupo">
+      @for (member of members(); track member) {
+        <li class="chip">
+          {{ member }}
+          <button
+            type="button"
+            class="chip-remove"
+            [attr.aria-label]="'Quitar a ' + member"
+            (click)="removeMember(member)"
+          >
+            ×
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (error()) {
+    <p class="error-text" role="alert">{{ error() }}</p>
+  }
+
+  <button type="submit" class="btn btn-primary submit" [disabled]="!canSubmit()">
+    {{ saving() ? 'Creando…' : 'Crear grupo' }}
+  </button>
+</form>
