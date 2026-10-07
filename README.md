@@ -31,6 +31,12 @@ cd backend && pytest
 cd frontend && npx ng test --watch=false
 ```
 
+## Capturas
+
+| Grupos | Detalle de un grupo |
+| --- | --- |
+| ![Listado de grupos](docs/grupos.png) | ![Detalle de un grupo](docs/detalle-grupo.png) |
+
 ## Decisiones
 
 - **Dinero en céntimos enteros**, nunca `float`. Al repartir 10,00 € entre 3, los céntimos que
