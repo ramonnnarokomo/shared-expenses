@@ -186,6 +186,17 @@ def create_payment(body: PaymentCreate, group: GroupFromPath, db: DbSession) -> 
     return payment
 
 
+@router.delete("/{group_id}/payments/{payment_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_payment(payment_id: int, group: GroupFromPath, db: DbSession) -> None:
+    """Undoes a payment registered by mistake; balances and settlements are recalculated on the next read."""
+    payment = db.get(Payment, payment_id)
+    if payment is None or payment.group_id != group.id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Pago no encontrado")
+
+    db.delete(payment)
+    db.commit()
+
+
 @router.get("/{group_id}/balances", response_model=list[BalanceOut])
 def get_balances(group: GroupFromPath) -> list[BalanceOut]:
     return [BalanceOut.model_validate(balance) for balance in compute_balances(group)]

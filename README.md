@@ -51,5 +51,6 @@ cd frontend && npx ng test --watch=false
 | POST | `/api/groups/{id}/expenses` | Añadir gasto (`equal` o `exact`) |
 | DELETE | `/api/groups/{id}/expenses/{expenseId}` | Borrar gasto |
 | POST | `/api/groups/{id}/payments` | Registrar un pago entre dos personas |
+| DELETE | `/api/groups/{id}/payments/{paymentId}` | Deshacer un pago registrado por error |
 | GET | `/api/groups/{id}/balances` | Balance de cada persona |
 | GET | `/api/groups/{id}/settlements` | Transferencias para saldar cuentas |

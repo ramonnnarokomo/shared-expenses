@@ -297,3 +297,26 @@ def test_payment_rules(client):
     assert outsider.json() == {"detail": "Las dos personas del pago tienen que pertenecer al grupo"}
     assert zero.status_code == 422
     assert isinstance(zero.json()["detail"], list)
+
+
+def test_delete_payment_restores_the_settlements(client):
+    group_id, ids = create_group(client, members=("Ana", "Luis"))
+    add_equal_expense(client, group_id, 2000, paid_by=ids["Ana"], member_ids=[ids["Ana"], ids["Luis"]])
+    payment = post_payment(client, group_id, ids["Luis"], ids["Ana"], 1000).json()
+    assert get_settlements(client, group_id) == []
+
+    response = client.delete(f"/api/groups/{group_id}/payments/{payment['id']}")
+
+    assert response.status_code == 204
+    assert get_settlements(client, group_id) == [("Luis", "Ana", 1000)]
+    assert client.get(f"/api/groups/{group_id}").json()["payments"] == []
+
+
+def test_cannot_delete_a_payment_through_another_group(client):
+    group_id, ids = create_group(client, members=("Ana", "Luis"))
+    other_group_id, _ = create_group(client, members=("Marta", "Javi"))
+    payment = post_payment(client, group_id, ids["Luis"], ids["Ana"], 500).json()
+
+    assert client.delete(f"/api/groups/{other_group_id}/payments/{payment['id']}").status_code == 404
+    assert client.delete(f"/api/groups/{group_id}/payments/999999").status_code == 404
+    assert len(client.get(f"/api/groups/{group_id}").json()["payments"]) == 1
