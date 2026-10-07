@@ -49,6 +49,10 @@ export class GroupsApi {
     return this.http.post<Payment>(`${this.baseUrl}/${groupId}/payments`, payment);
   }
 
+  deletePayment(groupId: number, paymentId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${groupId}/payments/${paymentId}`);
+  }
+
   getBalances(groupId: number): Observable<Balance[]> {
     return this.http.get<Balance[]>(`${this.baseUrl}/${groupId}/balances`);
   }

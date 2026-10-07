@@ -3,7 +3,7 @@ import { Component, OnInit, computed, inject, input, numberAttribute, signal } f
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
-import { Balance, Expense, GroupDetail, Member, Settlement } from '../core/api.models';
+import { Balance, Expense, GroupDetail, Member, Payment, Settlement } from '../core/api.models';
 import { apiErrorMessage } from '../core/api-error';
 import { GroupsApi } from '../core/groups-api';
 import { MoneyPipe } from '../core/money.pipe';
@@ -88,6 +88,21 @@ export class GroupDetailPage implements OnInit {
     this.api.deleteExpense(this.id(), expense.id).subscribe({
       next: () => {
         this.toasts.success('Gasto borrado');
+        this.load();
+      },
+      error: (error) => this.toasts.error(apiErrorMessage(error)),
+    });
+  }
+
+  protected undoPayment(payment: Payment): void {
+    const from = this.memberNames().get(payment.fromMemberId);
+    const to = this.memberNames().get(payment.toMemberId);
+    if (!window.confirm(`¿Deshacer el pago de ${from} a ${to}? Las cuentas volverán a como estaban.`)) {
+      return;
+    }
+    this.api.deletePayment(this.id(), payment.id).subscribe({
+      next: () => {
+        this.toasts.success('Pago deshecho');
         this.load();
       },
       error: (error) => this.toasts.error(apiErrorMessage(error)),

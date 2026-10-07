@@ -66,7 +66,17 @@
                   {{ memberNames().get(payment.toMemberId) }}
                   <span class="muted">· {{ payment.createdAt | date: 'd MMM' }}</span>
                 </span>
-                <span class="amount">{{ payment.amountCents | money: group.currency }}</span>
+                <span class="payment-actions">
+                  <span class="amount">{{ payment.amountCents | money: group.currency }}</span>
+                  <button
+                    type="button"
+                    class="btn btn-small"
+                    [attr.aria-label]="'Deshacer el pago de ' + memberNames().get(payment.fromMemberId) + ' a ' + memberNames().get(payment.toMemberId)"
+                    (click)="undoPayment(payment)"
+                  >
+                    Deshacer
+                  </button>
+                </span>
               </li>
             }
           </ul>

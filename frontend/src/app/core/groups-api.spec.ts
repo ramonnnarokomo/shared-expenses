@@ -67,4 +67,12 @@ describe('GroupsApi', () => {
     expect(request.request.method).toBe('DELETE');
     request.flush(null, { status: 204, statusText: 'No Content' });
   });
+
+  it('deletes a payment', () => {
+    api.deletePayment(7, 3).subscribe();
+    const request = http.expectOne('/api/groups/7/payments/3');
+
+    expect(request.request.method).toBe('DELETE');
+    request.flush(null, { status: 204, statusText: 'No Content' });
+  });
 });
