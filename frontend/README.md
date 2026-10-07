@@ -1,11 +1,11 @@
 # Gastos compartidos · frontend
 
-Interfaz en Angular 22 para la API de `../backend`. Componentes standalone, signals,
+Interfaz en Angular 21 para la API de `../backend`. Componentes standalone, signals,
 control flow nuevo (`@if`, `@for`), `inject()` y `HttpClient` con `withFetch()`. Sin librerías de UI.
 
 ## Requisitos
 
-- Node.js 22.22.3+ o 24.15+ (lo pide Angular CLI 22)
+- Node.js 20.19+, 22.12+ o 24+ (lo pide Angular CLI 21)
 - El backend arrancado en `http://localhost:8000`
 
 ## Arrancar

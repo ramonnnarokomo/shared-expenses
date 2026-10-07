@@ -4,7 +4,7 @@ App para repartir gastos en grupo, al estilo Splitwise: apuntas quién paga qué
 cuánto debe cada persona y propone unas pocas transferencias para quedar en paz.
 
 - **Backend:** FastAPI + SQLAlchemy 2.0 + Pydantic v2 + SQLite (`backend/`)
-- **Frontend:** Angular 22 con signals y componentes standalone (`frontend/`)
+- **Frontend:** Angular 21 con signals y componentes standalone (`frontend/`)
 
 ## Arrancar en local
 
@@ -16,7 +16,7 @@ source .venv/bin/activate
 pip install -r requirements-dev.txt
 uvicorn app.main:app --reload --port 8000   # docs en http://localhost:8000/docs
 
-# Frontend (otra terminal, Node 22.22.3+)
+# Frontend (otra terminal, Node 20.19+, 22.12+ o 24+)
 cd frontend
 npm install
 npm start                                    # http://localhost:4200

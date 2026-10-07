@@ -29,7 +29,7 @@ export class ExpenseForm {
   protected readonly amountText = signal('');
   protected readonly mode = signal<SplitMode>('equal');
   /** Exact mode: the text typed for each member id. */
-  protected readonly exactTexts = signal<Record<number, string>>({});
+  protected readonly exactTexts = signal<Partial<Record<number, string>>>({});
   protected readonly saving = signal(false);
   protected readonly error = signal<string | null>(null);
 
